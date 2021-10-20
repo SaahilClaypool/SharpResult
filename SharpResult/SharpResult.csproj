@@ -2,5 +2,17 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0;net5.0</TargetFrameworks>
     <LangVersion>10.0</LangVersion>
+    <PackageId>SharpResult</PackageId>
+    <Version>1.0.3</Version>
+    <Authors>Saahil Claypool</Authors>
+    <Company>Personal</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/SaahilClaypool/SharpResult</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+      <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
