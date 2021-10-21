@@ -18,15 +18,15 @@ public struct Result<TOk, TError>
     public Result(TOk ok) : this(ok, default, false) { }
     public Result(TError error) : this(default, error, true) { }
 
-    public Result<TOut, TError> Select<TOut>(Func<TOk, TOut> mapOk) => Select(mapOk, err => err);
-    public Result<TOut, TOutErr> Select<TOut, TOutErr>(Func<TOk, TOut> mapOk, Func<TError, TOutErr> mapErr)
+    public Result<TOut, TError> Bind<TOut>(Func<TOk, TOut> mapOk) => Bind(mapOk, err => err);
+    public Result<TOut, TOutErr> Bind<TOut, TOutErr>(Func<TOk, TOut> mapOk, Func<TError, TOutErr> mapErr)
     {
         if (IsError)
             return Result.Error(mapErr(Error));
         return Result.Ok(mapOk(Ok));
     }
 
-    public Result<TOut, TError> Bind<TOut>(Func<TOk, Result<TOut, TError>> mapOk) => Bind(mapOk, err => Result.Error(err));
+    public Result<TOut, TError> Bind<TOut>(Func<TOk, Result<TOut, TError>> mapOk) => Bind(mapOk, (Func<TError, Result<TOut, TError>>)(err => Result.Error(err)));
     public Result<TOut, TOutError> Bind<TOut, TOutError>(Func<TOk, Result<TOut, TOutError>> mapOk, Func<TError, Result<TOut, TOutError>> mapErr)
     {
         if (IsError)
