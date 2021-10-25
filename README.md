@@ -44,7 +44,6 @@ public class ResultTests
         Assert.Equal(100, result.Match(ok => ok, err => throw new System.Exception("unreachable")));
     }
 }
-}
 ```
 
 > Example bind usage
@@ -89,4 +88,28 @@ public string HandleRequestWithoutBind(string request)
     return "ok";
 }
 
+```
+
+> Create result types from functions throwing exceptions
+
+```cs
+[Fact]
+public void Try_FunctionsReturningValuesAreConvertedToOk()
+{
+    string okFunc() => "ok";
+
+    var tryOk = Result.Try(okFunc);
+    Assert.True(tryOk.IsOk);
+    Assert.Equal(okFunc(), tryOk.Unwrap());
+}
+
+[Fact]
+public void Try_FunctionsThrowingExceptionsAreConvertedToErrors()
+{
+    string errorFunc() => throw new System.Exception("error");
+
+    var tryError = Result.Try(errorFunc);
+    Assert.False(tryError.IsOk);
+    Assert.Equal("error", tryError.Error.Message);
+}
 ```

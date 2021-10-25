@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace SharpResult;
 
@@ -80,5 +81,21 @@ public static class Result
 
     public static bool IsOk<T, R>(Result<T, R> result) => result.Match(ok => true, err => false);
     public static T Unwrap<T, R>(Result<T, R> result) => result.Unwrap();
+
+    public static Result<T, Exception> Try<T> (Func<T> action, params Type[] catchTypes)
+    {
+        try
+        {
+            return action();
+        }
+        catch (Exception e)
+        {
+            if (catchTypes.Length == 0 || catchTypes.Contains(e.GetType()))
+            {
+                return Error(e);
+            }
+            throw;
+        }
+    }
 }
 
