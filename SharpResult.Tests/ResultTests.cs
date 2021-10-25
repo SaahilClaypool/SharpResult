@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Xunit;
 using static SharpResult.Result;
 
@@ -66,5 +67,25 @@ public class ResultTests
         {
             Assert.Equal("error", e.Message);
         }
+    }
+
+    [Fact]
+    public async Task Try_FunctionsReturningValuesAreConvertedToOkAsync()
+    {
+        static Task<string> okFunc() => Task.FromResult("ok");
+
+        var tryOk = await Result.Try(okFunc);
+        Assert.True(tryOk.IsOk);
+        Assert.Equal(await okFunc(), tryOk.Unwrap());
+    }
+
+    [Fact]
+    public async Task Try_FunctionsThrowingExceptionsAreConvertedToErrorsAsync()
+    {
+        static Task<string> errorFunc() => throw new System.Exception("error");
+
+        var tryError = await Result.Try(errorFunc);
+        Assert.False(tryError.IsOk);
+        Assert.Equal("error", tryError.Error.Message);
     }
 }

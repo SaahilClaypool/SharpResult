@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SharpResult;
 
@@ -87,6 +88,22 @@ public static class Result
         try
         {
             return action();
+        }
+        catch (Exception e)
+        {
+            if (catchTypes.Length == 0 || catchTypes.Contains(e.GetType()))
+            {
+                return Error(e);
+            }
+            throw;
+        }
+    }
+
+    public static async Task<Result<T, Exception>> Try<T> (Func<Task<T>> action, params Type[] catchTypes)
+    {
+        try
+        {
+            return await action();
         }
         catch (Exception e)
         {
