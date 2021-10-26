@@ -29,7 +29,7 @@ public struct Option<T>
             none();
     }
 
-    public TOut Map<TOut>(Func<T, TOut> map, Func<TOut> none) =>
+    public TOut Bind<TOut>(Func<T, TOut> map, Func<TOut> none) =>
         HasValue ? map(Value) : none();
 
     public Option<TOut> Bind<TOut>(Func<T, TOut> map) =>

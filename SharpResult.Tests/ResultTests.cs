@@ -88,4 +88,22 @@ public class ResultTests
         Assert.False(tryError.IsOk);
         Assert.Equal("error", tryError.Error.Message);
     }
+
+    [Fact]
+    public void ToOption_Ok_Some()
+    {
+        Result<int, string> result = Ok(100);
+        var option = result.ToOption();
+        Assert.True(option.IsSome);
+        Assert.Equal(100, option.Unwrap());
+    }
+
+    [Fact]
+    public void ToOption_Error_None()
+    {
+        Result<int, string> result = Error("err");
+        // implicit
+        Option<int> option = result;
+        Assert.True(option.IsNone);
+    }
 }

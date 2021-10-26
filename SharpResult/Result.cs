@@ -36,6 +36,8 @@ public struct Result<TOk, TError>
         return mapOk(Ok);
     }
 
+    public Option<TOk> ToOption() => Match(ok => Option.Some(ok), _ => Option.None);
+
     public TOut Match<TOut>(Func<TOk, TOut> mapOk, Func<TError, TOut> mapErr) =>
         !IsError ? mapOk(Ok) : mapErr(Error);
 
@@ -50,6 +52,9 @@ public struct Result<TOk, TError>
 
     public static implicit operator Result<TOk, TError>(TOk ok) =>
         new(ok);
+
+    public static implicit operator Option<TOk>(Result<TOk, TError> result) =>
+        result.ToOption();
 }
 
 public readonly struct DelayedOk<T>
@@ -82,6 +87,7 @@ public static class Result
 
     public static bool IsOk<T, R>(Result<T, R> result) => result.Match(ok => true, err => false);
     public static T Unwrap<T, R>(Result<T, R> result) => result.Unwrap();
+    public static Option<T> ToOption<T, R>(Result<T, R> result) => result.ToOption();
 
     public static Result<T, Exception> Try<T> (Func<T> action, params Type[] catchTypes)
     {
