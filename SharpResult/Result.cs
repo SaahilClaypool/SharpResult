@@ -4,9 +4,14 @@ using System.Threading.Tasks;
 
 namespace SharpResult;
 
+// disable obselete warnings inside this package
+#pragma warning disable 612,618
 public struct Result<TOk, TError>
 {
+    [Obsolete("Use 'Unwrap' to access directly, throwing an error if undefined")]
     public TOk Ok { get; set; }
+
+    [Obsolete("Use 'Match' to access safely")]
     public TError Error { get; set; }
     public bool IsError { get; set; }
     public bool IsOk => !IsError;
@@ -121,4 +126,4 @@ public static class Result
         }
     }
 }
-
+#pragma warning restore 612,618

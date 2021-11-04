@@ -2,8 +2,11 @@ using System;
 
 namespace SharpResult;
 
+// disable obselete warnings inside this package
+#pragma warning disable 612,618
 public struct Option<T>
 {
+    [Obsolete("Use 'Unwrap' to access directly, throwing an error if undefined")]
     public T Value { get; set; }
     public bool HasValue { get; set; }
     public bool IsSome => HasValue;

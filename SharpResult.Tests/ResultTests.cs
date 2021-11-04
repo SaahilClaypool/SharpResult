@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Xunit;
 using static SharpResult.Result;
@@ -11,7 +12,7 @@ public class ResultTests
     {
         Result<int, string> result = Error("error");
         Assert.True(result.IsError);
-        Assert.Equal("error", result.Error);
+        Assert.Equal("error", result.Match(_ => throw new Exception(), error => error));
         Assert.Equal("error", result.Match(ok => ok.ToString(), err => err));
     }
 
@@ -21,7 +22,7 @@ public class ResultTests
         Result<int, string> result = 100;
         Assert.False(result.IsError);
         Assert.True(result.IsOk);
-        Assert.Equal(100, result.Ok);
+        Assert.Equal(100, result.Unwrap());
         Assert.Equal(100, result.Match(ok => ok, err => throw new System.Exception("unreachable")));
     }
 
@@ -42,7 +43,7 @@ public class ResultTests
 
         var tryError = Result.Try(errorFunc);
         Assert.False(tryError.IsOk);
-        Assert.Equal("error", tryError.Error.Message);
+        Assert.Equal("error", tryError.Match(_ => throw new Exception(), error => error).Message);
     }
 
     [Fact]
@@ -51,7 +52,7 @@ public class ResultTests
         var errorFunc = string () => throw new System.DivideByZeroException("error");
         var tryOk = Result.Try(errorFunc, typeof(System.DivideByZeroException));
         Assert.False(tryOk.IsOk);
-        Assert.Equal("error", tryOk.Error.Message);
+        Assert.Equal("error", tryOk.Match(_ => throw new Exception(), err => err).Message);
     }
 
     [Fact]
@@ -86,7 +87,7 @@ public class ResultTests
 
         var tryError = await Result.Try(errorFunc);
         Assert.False(tryError.IsOk);
-        Assert.Equal("error", tryError.Error.Message);
+        Assert.Equal("error", tryError.Match(_ => throw new Exception(), err => err).Message);
     }
 
     [Fact]
