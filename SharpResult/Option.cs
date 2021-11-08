@@ -59,4 +59,7 @@ public static class Option
 
     public static bool IsSome<T>(Option<T> option) => option.Match(some => true, () => false);
     public static T Unwrap<T>(Option<T> option) => option.Unwrap();
+
+    public static Option<T> Filter<T>(this T @this, Func<T, bool> cond) => cond(@this) ? Some(@this) : None;
+    public static Option<T> Filter<T>(this Option<T> @this, Func<T, bool> cond) => @this.Bind(some => some.Filter(cond));
 }

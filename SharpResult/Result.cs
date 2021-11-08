@@ -41,6 +41,18 @@ public struct Result<TOk, TError>
         return mapOk(Ok);
     }
 
+    public Result<TOut, Exception> Try<TOut>(Func<TOk, TOut> mapOk)
+    {
+        try
+        {
+            return Bind(mapOk, _ => new Exception("try on failed result."));
+        }
+        catch(Exception ex)
+        {
+            return Result.Error(ex);
+        }
+    }
+
     public Option<TOk> ToOption() => Match(ok => Option.Some(ok), _ => Option.None);
 
     public TOut Match<TOut>(Func<TOk, TOut> mapOk, Func<TError, TOut> mapErr) =>
@@ -124,6 +136,38 @@ public static class Result
             }
             throw;
         }
+    }
+}
+
+public static class ResultAsyncExtensions
+{
+    public static async Task<Result<TOut, TError>> Bind<TOk, TOut, TError>(this Task<Result<TOk, TError>> res, Func<TOk, TOut> mapOk) =>
+        (await res).Bind(mapOk, err => err);
+
+    public static async Task<Result<TOut, TOutError>> Bind<TOk, TOut, TError, TOutError>(this Task<Result<TOk, TError>> res, Func<TOk, TOut> mapOk, Func<TError, TOutError> mapErr) =>
+        (await res).Bind(mapOk, mapErr);
+
+    public static async Task<Result<TOut, TError>> Bind<TOk, TOut, TError>(this Task<Result<TOk, TError>> res, Func<TOk, Result<TOut, TError>> mapOk) =>
+        (await res).Bind(mapOk, err => (Result<TOut, TError>)Result.Error(err));
+
+    public static async Task<Result<TOut, TError>> Bind<TOk, TOut, TError>(this Task<Result<TOk, TError>> res, Func<TOk, Result<TOut, TError>> mapOk, Func<TError, Result<TOut, TError>> mapErr) =>
+        (await res).Bind(mapOk, mapErr);
+
+    public static async Task<TOut> Bind<TOk, TError, TOut>(this Task<Result<TOk, TError>> res, Func<TOk, TOut> mapOk, Func<TError, TOut> mapErr) =>
+        (await res).Match(mapOk, mapErr);
+
+    
+    public static T Tap<T>(this T item, Action<T> action)
+    {
+        action(item);
+        return item;
+    }
+
+    public static async Task<T> Tap<T>(this Task<T> item, Action<T> action)
+    {
+        var res = await item;
+        action(res);
+        return res;
     }
 }
 #pragma warning restore 612,618
