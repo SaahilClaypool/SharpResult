@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 using static SharpResult.Result;
+using SharpResult.FunctionalExtensions;
 
 namespace SharpResult.Tests;
 
@@ -27,6 +28,16 @@ public class ResultTests
     }
 
     [Fact]
+    public void Async_ExtensionsExample()
+    {
+        var add1 = (int inp) => inp + 1;
+        var add1Delay = (int inp) => Task.FromResult(inp + 1);
+
+        Result<int, string> ok = Result.Ok(10);
+        ok.Bind(add1).Bind(add1Delay).Bind(val => val.Then(add1));
+    }
+
+    [Fact]
     public void Try_FunctionsReturningValuesAreConvertedToOk()
     {
         static string okFunc() => "ok";
@@ -44,6 +55,24 @@ public class ResultTests
         var tryError = Result.Try(errorFunc);
         Assert.False(tryError.IsOk);
         Assert.Equal("error", tryError.Match(_ => throw new Exception(), error => error).Message);
+    }
+
+    [Fact]
+    public void Bind_AppliesFunctionsToOks()
+    {
+        var mult2 = int (int input) => input * 2;
+        var add1 = int (int input) => input + 1;
+        var add1IfGreaterThan3 = Result<int, string> (int input) => input switch
+            {
+                > 3 => input + 1, _ => Error("value too small")
+            };
+        Result<int, string> ok = Ok(1);
+        var result = ok.Bind(mult2).Bind(add1);
+        Assert.Equal(3, result.Unwrap());
+        var err = result.Bind(add1IfGreaterThan3);
+        Assert.True(err.IsError);
+        var finalOutput = result.Bind(add1).Bind(add1IfGreaterThan3);
+        Assert.Equal(5, finalOutput.Unwrap());
     }
 
     [Fact]

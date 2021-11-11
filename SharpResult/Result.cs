@@ -156,18 +156,4 @@ public static class ResultAsyncExtensions
     public static async Task<TOut> Bind<TOk, TError, TOut>(this Task<Result<TOk, TError>> res, Func<TOk, TOut> mapOk, Func<TError, TOut> mapErr) =>
         (await res).Match(mapOk, mapErr);
 
-    
-    public static T Tap<T>(this T item, Action<T> action)
-    {
-        action(item);
-        return item;
-    }
-
-    public static async Task<T> Tap<T>(this Task<T> item, Action<T> action)
-    {
-        var res = await item;
-        action(res);
-        return res;
-    }
 }
-#pragma warning restore 612,618

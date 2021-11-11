@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace SharpResult;
 
@@ -62,4 +63,13 @@ public static class Option
 
     public static Option<T> Filter<T>(this T @this, Func<T, bool> cond) => cond(@this) ? Some(@this) : None;
     public static Option<T> Filter<T>(this Option<T> @this, Func<T, bool> cond) => @this.Bind(some => some.Filter(cond));
+}
+
+public static class OptionAsyncExtensions
+{
+    public static async Task<Option<TOut>> Bind<T, TOut>(this Task<Option<T>> res, Func<T, TOut> mapOk) =>
+        (await res).Bind(mapOk);
+
+    public static async Task<TOut> Bind<T, TOut>(this Task<Option<T>> res, Func<T, TOut> mapOk, Func<TOut> mapErr) =>
+        (await res).Match(mapOk, mapErr);
 }
