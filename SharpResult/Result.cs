@@ -61,6 +61,9 @@ public struct Result<TOk, TError>
     public TOk Unwrap() =>
         !IsError ? Ok : throw new Exception($"Result had error: {Error}");
 
+    public TError UnwrapError() =>
+        IsError ? Error : throw new Exception($"Result had no error: {Ok}");
+
     public static implicit operator Result<TOk, TError>(DelayedOk<TOk> ok) =>
         new(ok.Value);
 

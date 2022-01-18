@@ -3,7 +3,7 @@
     <TargetFrameworks>netstandard2.0;net6.0;net5.0</TargetFrameworks>
     <LangVersion>10.0</LangVersion>
     <PackageId>SharpResult</PackageId>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
     <Authors>Saahil Claypool</Authors>
     <Company>Personal</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
