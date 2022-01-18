@@ -17,11 +17,6 @@ public static class FunctionalExtensions
         return res;
     }
 
-    public static K Then<T, K>(this T @this, Func<T, K> fn) => fn(@this);
-    public static K Then<T, A, K>(this T @this, Func<T, A, K> fn, A a) => fn(@this, a);
-    public static K Then<T, A, B, K>(this T @this, Func<T, A, B, K> fn, A a, B b) => fn(@this, a, b);
-    public static K Then<T, A, B, C, K>(this T @this, Func<T, A, B, C, K> fn, A a, B b, C c) => fn(@this, a, b, c);
-
     public static async Task<K> Then<T, K>(this Task<T> @this, Func<T, K> fn) => fn(await @this);
     public static async Task<K> Then<T, A, K>(this Task<T> @this, Func<T, A, K> fn, A a) => fn(await @this, a);
     public static async Task<K> Then<T, A, B, K>(this Task<T> @this, Func<T, A, B, K> fn, A a, B b) => fn(await @this, a, b);
